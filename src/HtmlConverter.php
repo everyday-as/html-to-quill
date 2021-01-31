@@ -20,6 +20,7 @@ class HtmlConverter implements HtmlConverterInterface
         $this->converters = [
             new Converters\BreakConverter(),
             new Converters\CodeConverter(),
+            new Converters\QuoteConverter(),
             new Converters\EmphasisConverter(),
             new Converters\HeaderConverter(),
             new Converters\ImageConverter(),
