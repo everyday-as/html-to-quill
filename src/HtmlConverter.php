@@ -56,6 +56,16 @@ class HtmlConverter implements HtmlConverterInterface
         $ops = [];
         $crawler = new Crawler($html);
 
+        if ($crawler->count() === 0) {
+            $ops[] = DeltaOp::text($html);
+
+            $delta = new Delta($ops);
+
+            $delta->compact();
+
+            return $delta;
+        }
+
         foreach ($crawler->children() as $child) {
             $child->normalize();
 
