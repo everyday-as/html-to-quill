@@ -3,6 +3,7 @@
   "type": "library",
   "description": "PHP HTML to Quill Delta converter",
   "homepage": "https://github.com/Everyday-AS/html-to-quill",
+  "version": "0.1.1",
   "keywords": [
     "convert",
     "delta",
