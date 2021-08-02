@@ -37,7 +37,7 @@ class HtmlConverter implements HtmlConverterInterface
      *
      * @param string $html
      *
-     * @return string The Markdown version of the html
+     * @return Delta The Markdown version of the html
      */
     public function __invoke($html)
     {
@@ -121,7 +121,7 @@ class HtmlConverter implements HtmlConverterInterface
     }
 
     /**
-     * @param $nodeName
+     * @param string $nodeName
      *
      * @return NodeConverterInterface|mixed|null
      */
