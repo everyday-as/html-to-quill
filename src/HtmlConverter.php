@@ -12,7 +12,7 @@ class HtmlConverter implements HtmlConverterInterface
     /**
      * @var NodeConverterInterface[]
      */
-    private $converters;
+    protected $converters;
     private $tag_converter_cache = [];
 
     public function __construct()
