@@ -120,11 +120,11 @@ class HtmlConverter implements HtmlConverterInterface
         return $ops;
     }
 
-	/**
-	 * @param string $nodeName
-	 *
-	 * @return NodeConverterInterface|mixed|null
-	 */
+    /**
+     * @param string $nodeName
+     *
+     * @return NodeConverterInterface|mixed|null
+     */
     protected function getConverter(string $nodeName)
     {
         if (isset($this->tag_converter_cache[$nodeName])) {
