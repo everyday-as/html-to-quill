@@ -8,32 +8,23 @@ use Everyday\QuillDelta\DeltaOp;
 
 class EmphasisConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
     {
-        $ops = $htmlConverter->convertChildren($element);
+        $ops = $htmlConverter->convertChildren($node);
 
-        switch ($element->nodeName) {
-            case 'b':
-                DeltaOp::applyAttributes($ops, ['bold' => true]);
-                break;
-            case 'em':
-            case 'i':
-                DeltaOp::applyAttributes($ops, ['italic' => true]);
-                break;
-        }
+        match ($node->nodeName) {
+            'b' => DeltaOp::applyAttributes($ops, ['bold' => true]),
+            'em', 'i' => DeltaOp::applyAttributes($ops, ['italic' => true]),
+        };
 
         return $ops;
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

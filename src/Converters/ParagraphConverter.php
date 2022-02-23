@@ -8,21 +8,17 @@ use Everyday\QuillDelta\DeltaOp;
 
 class ParagraphConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
     {
-        $ops = $htmlConverter->convertChildren($element);
+        $ops = $htmlConverter->convertChildren($node);
 
         $modifier = DeltaOp::text("\n");
 
-        if (isset($element->attributes['align'])) {
-            $modifier->setAttribute('align', $element->attributes['align']->value);
+        if (isset($node->attributes['align'])) {
+            $modifier->setAttribute('align', $node->attributes['align']->value);
         }
 
         if ($modifier->isBlockModifier()) {
@@ -33,7 +29,7 @@ class ParagraphConverter implements NodeConverterInterface
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

@@ -19,8 +19,9 @@
     }
   ],
   "require": {
-    "everyday/php-quill-delta": "^0.1.4",
-    "symfony/dom-crawler": "^5.0",
+    "php": ">=8.0",
+    "everyday/php-quill-delta": "^0.1.6",
+    "symfony/dom-crawler": "^v6.0.0",
     "ext-dom": "*",
     "ext-json": "*"
   },

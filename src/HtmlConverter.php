@@ -2,19 +2,23 @@
 
 namespace Everyday\HtmlToQuill;
 
+use DOMNode;
 use Everyday\HtmlToQuill\Converters\NodeConverterInterface;
 use Everyday\QuillDelta\Delta;
 use Everyday\QuillDelta\DeltaOp;
+use JetBrains\PhpStorm\Pure;
 use Symfony\Component\DomCrawler\Crawler;
 
 class HtmlConverter implements HtmlConverterInterface
 {
     /**
-     * @var NodeConverterInterface[]
+     * @var array<NodeConverterInterface>
      */
-    protected $converters;
-    private $tag_converter_cache = [];
+    protected array $converters;
 
+    private array $tagConverterCache = [];
+
+    #[Pure]
     public function __construct()
     {
         $this->converters = [
@@ -33,13 +37,12 @@ class HtmlConverter implements HtmlConverterInterface
     /**
      * Convert
      *
-     * @see HtmlConverter::convert
-     *
      * @param string $html
      *
-     * @return Delta The Markdown version of the html
+     * @return Delta The Quill version of the html
+     * @see HtmlConverter::convert
      */
-    public function __invoke($html)
+    public function __invoke(string $html): Delta
     {
         return $this->convert($html);
     }
@@ -47,7 +50,7 @@ class HtmlConverter implements HtmlConverterInterface
     /**
      * {@inheritdoc}
      */
-    public function convert($html): Delta
+    public function convert(string $html): Delta
     {
         if (empty(trim($html))) {
             return new Delta([]);
@@ -91,11 +94,9 @@ class HtmlConverter implements HtmlConverterInterface
     /**
      * Convert to Quill
      *
-     * @param \DOMNode $node
-     *
      * @return DeltaOp[] The converted HTML as Quill DeltaOps
      */
-    public function convertChildren(\DOMNode $node): array
+    public function convertChildren(DOMNode $node): array
     {
         $ops = [];
 
@@ -120,20 +121,15 @@ class HtmlConverter implements HtmlConverterInterface
         return $ops;
     }
 
-    /**
-     * @param string $nodeName
-     *
-     * @return NodeConverterInterface|mixed|null
-     */
-    protected function getConverter(string $nodeName)
+    protected function getConverter(string $nodeName): ?NodeConverterInterface
     {
-        if (isset($this->tag_converter_cache[$nodeName])) {
-            return $this->tag_converter_cache[$nodeName];
+        if (isset($this->tagConverterCache[$nodeName])) {
+            return $this->tagConverterCache[$nodeName];
         }
 
         foreach ($this->converters as $converter) {
             if (in_array($nodeName, $converter->getSupportedTags())) {
-                return $this->tag_converter_cache[$nodeName] =& $converter;
+                return $this->tagConverterCache[$nodeName] =& $converter;
             }
         }
 

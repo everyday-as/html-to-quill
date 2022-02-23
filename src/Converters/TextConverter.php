@@ -8,24 +8,17 @@ use Everyday\QuillDelta\DeltaOp;
 
 class TextConverter implements NodeConverterInterface
 {
-
-    /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp
-     */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): DeltaOp
     {
-        if (empty(trim($element->textContent))) {
+        if (empty(trim($node->textContent))) {
             return DeltaOp::text(' ');
         }
 
-        return DeltaOp::text(ltrim($element->textContent, "\n"));
+        return DeltaOp::text(ltrim($node->textContent, "\n"));
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

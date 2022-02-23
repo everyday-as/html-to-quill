@@ -8,16 +8,12 @@ use Everyday\QuillDelta\DeltaOp;
 
 class ImageConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return ?array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): ?array
     {
-        $src = $element->attributes->getNamedItem('src')->textContent ?? null;
+        $src = $node->attributes->getNamedItem('src')->textContent ?? null;
 
         if (null === $src)
         {
@@ -29,14 +25,14 @@ class ImageConverter implements NodeConverterInterface
         }
 
         $attributes = [
-            'alt' => $element->attributes->getNamedItem('alt')->textContent ?? null,
-            'height' => $element->attributes->getNamedItem('height')->textContent ?? null,
-            'width' => $element->attributes->getNamedItem('width')->textContent ?? null,
+            'alt' => $node->attributes->getNamedItem('alt')->textContent ?? null,
+            'height' => $node->attributes->getNamedItem('height')->textContent ?? null,
+            'width' => $node->attributes->getNamedItem('width')->textContent ?? null,
         ];
 
         $ops = [DeltaOp::embed('image', $src, $attributes)];
 
-        if (null !== ($align = $element->attributes->getNamedItem('align'))) {
+        if (null !== ($align = $node->attributes->getNamedItem('align'))) {
             $ops[] = DeltaOp::blockModifier('align', $align->textContent);
         }
 
@@ -44,7 +40,7 @@ class ImageConverter implements NodeConverterInterface
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

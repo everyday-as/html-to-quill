@@ -8,18 +8,14 @@ use Everyday\QuillDelta\DeltaOp;
 
 class QuoteConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
     {
-        $ops = $htmlConverter->convertChildren($element);
+        $ops = $htmlConverter->convertChildren($node);
 
-        if (1 === count($ops) && !$ops[0]->isEmbed() && false === strpos($ops[0]->getInsert(), "\n")) {
+        if (1 === count($ops) && !$ops[0]->isEmbed() && !str_contains($ops[0]->getInsert(), "\n")) {
             $ops[0]->setAttribute('blockquote', true);
 
             return $ops;
@@ -31,7 +27,7 @@ class QuoteConverter implements NodeConverterInterface
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

@@ -12,18 +12,14 @@ interface HtmlConverterInterface
     /**
      * Convert the given $html to Markdown
      *
-     * @param string $html
+     * @return Delta The Quill version of the html
      *
-     * @return Delta The Markdown version of the html
      * @throws InvalidArgumentException
-     *
      */
-    public function convert($html): Delta;
+    public function convert(string $html): Delta;
 
     /**
-     * @param DOMNode $node
-     *
-     * @return DeltaOp[]
+     * @return array<DeltaOp>
      */
     public function convertChildren(DOMNode $node): array;
 }

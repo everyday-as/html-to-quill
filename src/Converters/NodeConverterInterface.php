@@ -9,15 +9,12 @@ use Everyday\QuillDelta\DeltaOp;
 interface NodeConverterInterface
 {
     /**
-     * @param DOMNode               $node
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]|DeltaOp|null
+     * @return array<DeltaOp>|DeltaOp|null
      */
-    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter);
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): DeltaOp|array|null;
 
     /**
-     * @return array
+     * @return array<string>
      */
     public function getSupportedTags(): array;
 }

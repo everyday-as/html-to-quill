@@ -8,30 +8,26 @@ use Everyday\QuillDelta\DeltaOp;
 
 class HeaderConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
     {
-        $modifier = DeltaOp::blockModifier('header', (int)substr($element->nodeName, 1, 1));
+        $modifier = DeltaOp::blockModifier('header', (int)substr($node->nodeName, 1, 1));
 
-        if (isset($element->attributes['align'])) {
-            $modifier->setAttribute('align', $element->attributes['align']->value);
+        if (isset($node->attributes['align'])) {
+            $modifier->setAttribute('align', $node->attributes['align']->value);
         }
 
         return array_merge(
             [DeltaOp::text("\n")],
-            $htmlConverter->convertChildren($element),
-            [DeltaOp::blockModifier('header', (int)substr($element->nodeName, 1, 1))]
+            $htmlConverter->convertChildren($node),
+            [DeltaOp::blockModifier('header', (int)substr($node->nodeName, 1, 1))]
         );
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

@@ -2,26 +2,21 @@
 
 namespace Everyday\HtmlToQuill\Converters;
 
-use DOMNode;
 use Everyday\HtmlToQuill\HtmlConverterInterface;
 use Everyday\QuillDelta\DeltaOp;
 
 class LinkConverter implements NodeConverterInterface
 {
-
     /**
-     * @param DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp[]
+     * @return ?array<DeltaOp>
      */
-    public function convert(DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(\DOMNode $node, HtmlConverterInterface $htmlConverter): ?array
     {
-        if (!$element->hasChildNodes() || empty($ops = $htmlConverter->convertChildren($element))) {
+        if (!$node->hasChildNodes() || empty($ops = $htmlConverter->convertChildren($node))) {
             return null;
         }
 
-        if (null !== ($href = $element->attributes->getNamedItem('href'))) {
+        if (null !== ($href = $node->attributes->getNamedItem('href'))) {
             $href = $href->textContent;
 
             if (!in_array(parse_url($href, PHP_URL_SCHEME), ['', 'http', 'https'])) {
@@ -30,7 +25,7 @@ class LinkConverter implements NodeConverterInterface
 
             DeltaOp::applyAttributes($ops, ['link' => $href]);
 
-            if (null !== ($target = $element->attributes->getNamedItem('target'))) {
+            if (null !== ($target = $node->attributes->getNamedItem('target'))) {
                 DeltaOp::applyAttributes($ops, ['target' => $target->textContent]);
             }
         }
@@ -39,7 +34,7 @@ class LinkConverter implements NodeConverterInterface
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {

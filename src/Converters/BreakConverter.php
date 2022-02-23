@@ -7,20 +7,13 @@ use Everyday\QuillDelta\DeltaOp;
 
 class BreakConverter implements NodeConverterInterface
 {
-
-    /**
-     * @param \DOMNode               $element
-     * @param HtmlConverterInterface $htmlConverter
-     *
-     * @return DeltaOp
-     */
-    public function convert(\DOMNode $element, HtmlConverterInterface $htmlConverter)
+    public function convert(\DOMNode $node, HtmlConverterInterface $htmlConverter): DeltaOp
     {
         return DeltaOp::text("\n");
     }
 
     /**
-     * @return string[]
+     * @return array<string>
      */
     public function getSupportedTags(): array
     {
