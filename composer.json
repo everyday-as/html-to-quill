@@ -2,7 +2,7 @@
   "name": "xainjatt/html-to-quill",
   "type": "library",
   "description": "PHP HTML to Quill Delta converter",
-  "homepage": "https://github.com/Everyday-AS/html-to-quill",
+  "homepage": "https://github.com/XAINJATT/html-to-quill",
   "keywords": [
     "convert",
     "delta",
