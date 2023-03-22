@@ -25,7 +25,7 @@ class ImageConverter implements NodeConverterInterface
         }
 
         $attributes = [
-            'alt' => $node->attributes->getNamedItem('alt')->textContent ?? null,
+//             'alt' => $node->attributes->getNamedItem('alt')->textContent ?? null,
             'height' => $node->attributes->getNamedItem('height')->textContent ?? null,
             'width' => $node->attributes->getNamedItem('width')->textContent ?? null,
         ];
