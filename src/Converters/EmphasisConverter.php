@@ -18,6 +18,7 @@ class EmphasisConverter implements NodeConverterInterface
         match ($node->nodeName) {
             'b', 'strong' => DeltaOp::applyAttributes($ops, ['bold' => true]),
             'em', 'i' => DeltaOp::applyAttributes($ops, ['italic' => true]),
+            'u' => DeltaOp::applyAttributes($ops, ['underline' => true]),
         };
 
         return $ops;
@@ -28,6 +29,6 @@ class EmphasisConverter implements NodeConverterInterface
      */
     public function getSupportedTags(): array
     {
-        return ['strong', 'b', 'em', 'i'];
+        return ['strong', 'b', 'em', 'i', 'u'];
     }
 }
