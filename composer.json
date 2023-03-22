@@ -19,7 +19,7 @@
     }
   ],
   "require": {
-    "php": ">=8.0",
+    "php": ">=7.4",
     "everyday/php-quill-delta": "^0.1.6",
     "symfony/dom-crawler": "^v6.0.0",
     "ext-dom": "*",
