@@ -20,7 +20,7 @@
   ],
   "require": {
     "php": ">=7.4",
-    "everyday/php-quill-delta": "^0.1.6",
+    "xainjatt/php-quill-delta": "dev-master",
     "symfony/dom-crawler": "^v6.0.0",
     "ext-dom": "*",
     "ext-json": "*"
