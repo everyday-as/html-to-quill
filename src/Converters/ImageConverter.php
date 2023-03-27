@@ -34,15 +34,15 @@ class ImageConverter implements NodeConverterInterface
         if (null !== ($align = $node->attributes->getNamedItem('align'))) {
             $ops[] = DeltaOp::blockModifier('align', $align->textContent);
         }
-
-        if (isset($node->attributes['class'])) {
-            $class = $node->attributes['class'];
-            $map = ['q-align-center' => 'center', 'q-align-right' => 'right', 'q-align-left' => 'left'];
-            if (isset($map[$class])) {
-                $ops[] = DeltaOp::blockModifier('align', $map[$class]);
+        if ($node->attributes['class']) {
+            if ($node->attributes['class']->nodeValue == "ql-align-center") {
+                $ops[] = DeltaOp::blockModifier('align', "center");
+            } elseif ($node->attributes['class']->nodeValue == "ql-align-left") {
+                $ops[] = DeltaOp::blockModifier('align', "left");
+            } elseif ($node->attributes['class']->nodeValue == "ql-align-right") {
+                $ops[] = DeltaOp::blockModifier('align', "right");
             }
         }
-
         return $ops;
     }
 
