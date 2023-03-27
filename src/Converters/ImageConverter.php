@@ -15,8 +15,7 @@ class ImageConverter implements NodeConverterInterface
     {
         $src = $node->attributes->getNamedItem('src')->textContent ?? null;
 
-        if (null === $src)
-        {
+        if (null === $src) {
             return null;
         }
 
@@ -25,7 +24,7 @@ class ImageConverter implements NodeConverterInterface
         }
 
         $attributes = [
-//             'alt' => $node->attributes->getNamedItem('alt')->textContent ?? null,
+            //             'alt' => $node->attributes->getNamedItem('alt')->textContent ?? null,
             'height' => $node->attributes->getNamedItem('height')->textContent ?? null,
             'width' => $node->attributes->getNamedItem('width')->textContent ?? null,
         ];
@@ -34,6 +33,14 @@ class ImageConverter implements NodeConverterInterface
 
         if (null !== ($align = $node->attributes->getNamedItem('align'))) {
             $ops[] = DeltaOp::blockModifier('align', $align->textContent);
+        }
+
+        if (isset($node->attributes['class'])) {
+            $class = $node->attributes['class'];
+            $map = ['q-align-center' => 'center', 'q-align-right' => 'right', 'q-align-left' => 'left'];
+            if (isset($map[$class])) {
+                $ops[] = DeltaOp::blockModifier('align', $map[$class]);
+            }
         }
 
         return $ops;

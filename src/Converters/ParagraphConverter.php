@@ -20,7 +20,14 @@ class ParagraphConverter implements NodeConverterInterface
         if (isset($node->attributes['align'])) {
             $modifier->setAttribute('align', $node->attributes['align']->value);
         }
-
+        
+        if (isset($node->attributes['class'])) {
+            $class = $node->attributes['class'];
+            $map = ['q-align-center' => 'center', 'q-align-right' => 'right', 'q-align-left' => 'left'];
+            if (isset($map[$class])) {
+                $modifier->setAttribute('align', $map[$class]);
+            }
+        }
         if ($modifier->isBlockModifier()) {
             $ops[] = $modifier;
         }
