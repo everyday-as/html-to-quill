@@ -21,7 +21,7 @@
   "require": {
     "php": ">=7.4",
     "xainjatt/php-quill-delta": "dev-master",
-    "symfony/dom-crawler": "^v6.0.0",
+    "symfony/dom-crawler": "*",
     "ext-dom": "*",
     "ext-json": "*"
   },

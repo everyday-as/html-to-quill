@@ -43,6 +43,12 @@ class ImageConverter implements NodeConverterInterface
                 $ops[] = DeltaOp::blockModifier('align', "right");
             }
         }
+        if ($node->parentNode->nodeName !== "li") {
+            return array_merge(
+                [DeltaOp::text("\n")],
+                $ops,
+            );
+        }
         return $ops;
     }
 

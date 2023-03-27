@@ -10,22 +10,31 @@ class ListConverter implements NodeConverterInterface
 {
     public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
     {
-        $ops = $htmlConverter->convertChildren($node, ['preserveWhitespace' => true]);
+        $attribute = "\t";
+        $ops = $htmlConverter->convertChildren($node);
+        if ($node->nodeName == "li") {
+            if ($node->parentNode->nodeName == "ul") {
+                $attribute = "bullet";
+            }
+            if ($node->parentNode->nodeName == "ol") {
+                $attribute = "ordered";
+            }
+        }
 
-        $attribute =  $node->nodeName == 'ul' ? 'bullet' : 'ordered';
         $modifier = DeltaOp::text("\n");
-        // $ops[] = $modifier->setAttribute("list", $attribute);
+        $ops[] = $modifier->setAttribute("list", $attribute);
+
         foreach ($node->childNodes as $child) {
             if ($child instanceof DOMNode) {
-                // if ($child->nodeName == "li") {
+                if ($child->nodeName == "li") {
                     $ops[] = $modifier->setAttribute("list", $attribute);
-                // }
+                }
             }
         }
         if ($modifier->isBlockModifier()) {
             $ops[] = $modifier;
         }
-
+        
         return $ops;
     }
 

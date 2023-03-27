@@ -21,6 +21,12 @@ class EmphasisConverter implements NodeConverterInterface
             'u' => DeltaOp::applyAttributes($ops, ['underline' => true]),
         };
 
+        if ($node->parentNode->nodeName !== "li" && !$node->hasChildNodes()) {
+            return array_merge(
+                [DeltaOp::text("\n")],
+                $ops,
+            );
+        }
         return $ops;
     }
 
