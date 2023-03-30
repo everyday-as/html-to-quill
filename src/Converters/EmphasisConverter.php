@@ -16,10 +16,17 @@ class EmphasisConverter implements NodeConverterInterface
         $ops = $htmlConverter->convertChildren($node);
 
         match ($node->nodeName) {
-            'b' => DeltaOp::applyAttributes($ops, ['bold' => true]),
+            'b', 'strong' => DeltaOp::applyAttributes($ops, ['bold' => true]),
             'em', 'i' => DeltaOp::applyAttributes($ops, ['italic' => true]),
+            'u' => DeltaOp::applyAttributes($ops, ['underline' => true]),
         };
 
+        if ($node->parentNode->nodeName !== "li" && !$node->hasChildNodes()) {
+            return array_merge(
+                [DeltaOp::text("\n")],
+                $ops,
+            );
+        }
         return $ops;
     }
 
@@ -28,6 +35,6 @@ class EmphasisConverter implements NodeConverterInterface
      */
     public function getSupportedTags(): array
     {
-        return ['b', 'em', 'i'];
+        return ['strong', 'b', 'em', 'i', 'u'];
     }
 }

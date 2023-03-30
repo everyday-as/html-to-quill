@@ -31,6 +31,7 @@ class HtmlConverter implements HtmlConverterInterface
             new Converters\LinkConverter(),
             new Converters\ParagraphConverter(),
             new Converters\TextConverter(),
+            new Converters\ListConverter(),
         ];
     }
 

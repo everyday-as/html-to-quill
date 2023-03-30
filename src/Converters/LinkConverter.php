@@ -25,9 +25,9 @@ class LinkConverter implements NodeConverterInterface
 
             DeltaOp::applyAttributes($ops, ['link' => $href]);
 
-            if (null !== ($target = $node->attributes->getNamedItem('target'))) {
-                DeltaOp::applyAttributes($ops, ['target' => $target->textContent]);
-            }
+//             if (null !== ($target = $node->attributes->getNamedItem('target'))) {
+//                 DeltaOp::applyAttributes($ops, ['target' => $target->textContent]);
+//             }
         }
 
         return $ops;

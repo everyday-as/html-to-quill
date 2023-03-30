@@ -1,8 +1,8 @@
 {
-  "name": "everyday/html-to-quill",
+  "name": "xainjatt/html-to-quill",
   "type": "library",
   "description": "PHP HTML to Quill Delta converter",
-  "homepage": "https://github.com/Everyday-AS/html-to-quill",
+  "homepage": "https://github.com/XAINJATT/html-to-quill",
   "keywords": [
     "convert",
     "delta",
@@ -19,9 +19,9 @@
     }
   ],
   "require": {
-    "php": ">=8.0",
-    "everyday/php-quill-delta": "^0.1.6",
-    "symfony/dom-crawler": "^v6.0.0",
+    "php": ">=7.4",
+    "xainjatt/php-quill-delta": "dev-master",
+    "symfony/dom-crawler": "*",
     "ext-dom": "*",
     "ext-json": "*"
   },
