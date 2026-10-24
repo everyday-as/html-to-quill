@@ -8,29 +8,58 @@ use Everyday\QuillDelta\DeltaOp;
 
 class QuoteConverter implements NodeConverterInterface
 {
-    /**
-     * @return array<DeltaOp>
-     */
-    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
-    {
-        $ops = $htmlConverter->convertChildren($node);
+	/**
+	 * @return array<DeltaOp>
+	 */
+	//   Attach blockquote formatting to the terminator of each quoted line.
+	//   Used by HtmlConverter\convertChildren.
+	public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array {
+		// Convert the quoted content before separating its line terminators.
+		$ops=$htmlConverter->convertChildren($node);
+		$quoteOps=[];
+		foreach ($ops as $op) {
+			// Preserve embedded content without treating it as a text string.
+			if ($op->isEmbed()) {
+				$quoteOps[]=$op;
+				continue;
+			}
 
-        if (1 === count($ops) && !$ops[0]->isEmbed() && !str_contains($ops[0]->getInsert(), "\n")) {
-            $ops[0]->setAttribute('blockquote', true);
+			// Retain text formatting and any existing attributes on line terminators.
+			$attributes=$op->getAttributes();
+			$lineAttributes=($op->isBlockModifier() ? $attributes : []);
+			$lineAttributes['blockquote']=true;
+			$parts=explode("\n", $op->getInsert());
+			$lastPart=count($parts)-1;
+			foreach ($parts as $index => $part) {
+				// Keep inline attributes on text rather than adding the quote format to it.
+				if ($part!=='') {
+					$quoteOps[]=DeltaOp::text($part, $attributes);
+				}
 
-            return $ops;
-        }
+				// Mark each existing line break as a quoted line terminator.
+				if ($index<$lastPart) {
+					$quoteOps[]=DeltaOp::text("\n", $lineAttributes);
+				}
+			}
+		}
 
-        DeltaOp::applyAttributes($ops, ['blockquote' => true]);
+		// Terminate the final quoted line, including an empty blockquote.
+		$lastOp=end($quoteOps);
+		if ($lastOp===false || $lastOp->getInsert()!=="\n") {
+			$quoteOps[]=DeltaOp::blockModifier('blockquote');
+		}
 
-        return $ops;
-    }
+		return $quoteOps;
+	}
 
-    /**
-     * @return array<string>
-     */
-    public function getSupportedTags(): array
-    {
-        return ['blockquote'];
-    }
+
+	/**
+	 * @return array<string>
+	 */
+	//   List the quote tags handled by this converter.
+	//   Used by HtmlConverter\getConverter.
+	public function getSupportedTags(): array {
+		// Register the blockquote tag for converter lookup.
+		return ['blockquote'];
+	}
 }
