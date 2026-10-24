@@ -8,31 +8,35 @@ use Everyday\QuillDelta\DeltaOp;
 
 class ParagraphConverter implements NodeConverterInterface
 {
-    /**
-     * @return array<DeltaOp>
-     */
-    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
-    {
-        $ops = $htmlConverter->convertChildren($node);
+	/**
+	 * @return array<DeltaOp>
+	 */
+	//   Convert paragraph content and preserve its terminating newline.
+	//   Used by HtmlConverter\convertChildren.
+	public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array {
+		// Convert the paragraph content before adding its line terminator.
+		$ops=$htmlConverter->convertChildren($node);
+		$modifier=DeltaOp::text("\n");
 
-        $modifier = DeltaOp::text("\n");
+		// Keep paragraph alignment attached to the terminating newline.
+		if (isset($node->attributes['align'])) {
+			$modifier->setAttribute('align', $node->attributes['align']->value);
+		}
 
-        if (isset($node->attributes['align'])) {
-            $modifier->setAttribute('align', $node->attributes['align']->value);
-        }
+		// Every paragraph ends a line, including paragraphs without block attributes.
+		$ops[]=$modifier;
 
-        if ($modifier->isBlockModifier()) {
-            $ops[] = $modifier;
-        }
+		return $ops;
+	}
 
-        return $ops;
-    }
 
-    /**
-     * @return array<string>
-     */
-    public function getSupportedTags(): array
-    {
-        return ['p'];
-    }
+	/**
+	 * @return array<string>
+	 */
+	//   List the paragraph tags handled by this converter.
+	//   Used by HtmlConverter\getConverter.
+	public function getSupportedTags(): array {
+		// Register the paragraph tag for converter lookup.
+		return ['p'];
+	}
 }
