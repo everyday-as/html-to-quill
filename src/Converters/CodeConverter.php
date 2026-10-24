@@ -8,29 +8,39 @@ use Everyday\QuillDelta\DeltaOp;
 
 class CodeConverter implements NodeConverterInterface
 {
-    /**
-     * @return array<DeltaOp>
-     */
-    public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
-    {
-        $ops = $htmlConverter->convertChildren($node);
+	/**
+	 * @return array<DeltaOp>
+	 */
+	//   Preserve inline code across multiple child operations.
+	//   Used by HtmlConverter\convertChildren.
+	public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array {
+		// Convert the children while retaining their existing inline formatting.
+		$ops=$htmlConverter->convertChildren($node);
+		$isInline=true;
 
-        if (1 === count($ops) && !$ops[0]->isEmbed() && !str_contains($ops[0]->getInsert(), "\n")) {
-            $ops[0]->setAttribute('code', true);
+		// Keep the block treatment for embedded or multiline content.
+		foreach ($ops as $op) {
+			if ($op->isEmbed() || str_contains($op->getInsert(), "\n")) {
+				$isInline=false;
+				break;
+			}
+		}
 
-            return $ops;
-        }
+		// Apply one code format to the complete span, regardless of operation count.
+		$attribute=($isInline ? 'code' : 'code-block');
+		DeltaOp::applyAttributes($ops, [$attribute => true]);
 
-        DeltaOp::applyAttributes($ops, ['code-block' => true]);
+		return $ops;
+	}
 
-        return $ops;
-    }
 
-    /**
-     * @return array<string>
-     */
-    public function getSupportedTags(): array
-    {
-        return ['code'];
-    }
+	/**
+	 * @return array<string>
+	 */
+	//   List the code tags handled by this converter.
+	//   Used by HtmlConverter\getConverter.
+	public function getSupportedTags(): array {
+		// Register the code tag for converter lookup.
+		return ['code'];
+	}
 }
