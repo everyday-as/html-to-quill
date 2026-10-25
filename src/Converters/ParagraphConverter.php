@@ -14,8 +14,9 @@ class ParagraphConverter implements NodeConverterInterface
 	//   Convert paragraph content and preserve its terminating newline.
 	//   Used by HtmlConverter\convertChildren.
 	public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array {
-		// Convert the paragraph content before adding its line terminator.
-		$ops=$htmlConverter->convertChildren($node);
+		// A lone break is an empty paragraph placeholder, supplied by the line terminator.
+		$isPlaceholderBreak=($node->childNodes->length===1 && $node->firstChild->nodeName==='br');
+		$ops=($isPlaceholderBreak ? [] : $htmlConverter->convertChildren($node));
 		$modifier=DeltaOp::text("\n");
 
 		// Keep paragraph alignment attached to the terminating newline.
