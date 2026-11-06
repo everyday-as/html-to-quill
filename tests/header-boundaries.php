@@ -17,6 +17,7 @@ $cases=[
 	'comment before header'   => ['<p>a</p><!-- note --><h1>b</h1>', "a\nb\n"],
 	'nested after paragraph'  => ['<div><p>a</p><h1>b</h1></div>', "a\nb\n"],
 	'wrapped paragraph'       => ['<div><p>a</p></div><h1>b</h1>', "a\nb\n"],
+	'empty element before'    => ['<p>a</p><span></span><h1>b</h1>', "a\nb\n"],
 	'inline text before'      => ['<div>a<h1>b</h1></div>', "a\nb\n"],
 	'unterminated block'      => ['<div>a</div><h1>b</h1>', "a\nb\n"],
 	'first nested header'     => ['<div>a<div><h1>b</h1></div></div>', "a\nb\n"],

@@ -55,6 +55,11 @@ class HeaderConverter implements NodeConverterInterface
         $wrapper->appendChild($previous->cloneNode(true));
         $ops = $htmlConverter->convertChildren($wrapper);
 
-        return end($ops) instanceof DeltaOp && !end($ops)->isEmbed() && str_ends_with(end($ops)->getInsert(), "\n");
+        // Content that converts to nothing, such as an empty element, is skipped
+        if ([] === $ops) {
+            return $this->followsLineEnding($previous, $htmlConverter);
+        }
+
+        return !end($ops)->isEmbed() && str_ends_with(end($ops)->getInsert(), "\n");
     }
 }
