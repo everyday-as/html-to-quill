@@ -22,7 +22,7 @@ class HeaderConverter implements NodeConverterInterface
         return array_merge(
             [DeltaOp::text("\n")],
             $htmlConverter->convertChildren($node),
-            [DeltaOp::blockModifier('header', (int)substr($node->nodeName, 1, 1))]
+            [$modifier]
         );
     }
 
