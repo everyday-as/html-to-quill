@@ -11,11 +11,6 @@ use Everyday\QuillDelta\DeltaOp;
 class HeaderConverter implements NodeConverterInterface
 {
     /**
-     * Tags whose converted content already ends with a newline.
-     */
-    private const LINE_ENDING_TAGS = ['br', 'p', 'blockquote', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-
-    /**
      * @return array<DeltaOp>
      */
     public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): array
@@ -27,7 +22,7 @@ class HeaderConverter implements NodeConverterInterface
         }
 
         return array_merge(
-            $this->followsLineEnding($node) ? [] : [DeltaOp::text("\n")],
+            $this->followsLineEnding($node, $htmlConverter) ? [] : [DeltaOp::text("\n")],
             $htmlConverter->convertChildren($node),
             [DeltaOp::blockModifier('header', (int)substr($node->nodeName, 1, 1))]
         );
@@ -44,7 +39,7 @@ class HeaderConverter implements NodeConverterInterface
     /**
      * Whether the content before the header already ends with a newline.
      */
-    private function followsLineEnding(DOMNode $node): bool
+    private function followsLineEnding(DOMNode $node, HtmlConverterInterface $htmlConverter): bool
     {
         $sibling = $node->previousSibling;
 
@@ -60,6 +55,16 @@ class HeaderConverter implements NodeConverterInterface
             }
         }
 
-        return null === $sibling || in_array($sibling->nodeName, self::LINE_ENDING_TAGS, true);
+        if (null === $sibling) {
+            return true;
+        }
+
+        // Convert a copy of the preceding content, so custom converters and wrapped blocks are checked as they convert
+        $wrapper = $sibling->ownerDocument->createElement('div');
+        $wrapper->appendChild($sibling->cloneNode(true));
+        $ops = $htmlConverter->convertChildren($wrapper);
+        $last = end($ops);
+
+        return false !== $last && !$last->isEmbed() && str_ends_with($last->getInsert(), "\n");
     }
 }
