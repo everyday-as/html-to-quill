@@ -13,7 +13,9 @@ $cases=[
 	'quote before paragraph'       => ["<blockquote>a</blockquote>\n<p>b</p>", "a\nb\n"],
 	'inline after paragraph'       => ['<p>a</p> <b>b</b>', "a\nb\n"],
 	'space between inline tags'    => ['<p><b>a</b> <i>b</i></p>', "a b\n"],
-	'newline between inline tags'  => ["<p><b>a</b>\n<i>b</i></p>", "a b\n"]
+	'newline between inline tags'  => ["<p><b>a</b>\n<i>b</i></p>", "a b\n"],
+	'blocks without line endings'  => ['<div>one</div> <div>two</div>', "one two\n"],
+	'comments between blocks'      => ["<p>a</p><!--x-->\n<!--y--><p>b</p>", "a\nb\n"]
 ];
 $converter=new HtmlConverter();
 foreach ($cases as $label => [$html, $expectedText]) {

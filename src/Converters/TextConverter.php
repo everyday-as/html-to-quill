@@ -2,21 +2,20 @@
 
 namespace Everyday\HtmlToQuill\Converters;
 
+use DOMComment;
 use DOMNode;
+use DOMText;
 use Everyday\HtmlToQuill\HtmlConverterInterface;
 use Everyday\QuillDelta\DeltaOp;
 
 class TextConverter implements NodeConverterInterface
 {
-	// Block-level tags around which whitespace-only text is not rendered.
-	private const BLOCK_TAGS=['address', 'article', 'aside', 'blockquote', 'dd', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hr', 'li', 'main', 'nav', 'ol', 'p', 'pre', 'section', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'ul'];
-
 	//   Preserve zero-valued text while normalizing whitespace-only nodes.
 	//   Used by HtmlConverter\convertChildren.
 	public function convert(DOMNode $node, HtmlConverterInterface $htmlConverter): ?DeltaOp {
 		if (trim($node->textContent)==='') {
-			// Drop formatting whitespace between block elements, as browsers do not render it.
-			if ($this->isBlock($node->previousSibling) || $this->isBlock($node->nextSibling)) {
+			// Drop formatting whitespace after content that already ends a line, as browsers do not render it.
+			if ($this->followsLineEnding($node, $htmlConverter)) {
 				return null;
 			}
 
@@ -28,11 +27,24 @@ class TextConverter implements NodeConverterInterface
 		return DeltaOp::text(ltrim($node->textContent, "\n"));
 	}
 
-	//   Check whether a sibling node is a block-level element.
-	//   Used by TextConverter\convert.
-	private function isBlock(?DOMNode $node): bool {
-		// Text, comments and missing siblings are never block-level.
-		return ($node!==null && in_array($node->nodeName, self::BLOCK_TAGS, true));
+	//   Check whether the content before the node, skipping comments and whitespace, already ends a line.
+	//   Used by TextConverter\convert, TextConverter\followsLineEnding.
+	private function followsLineEnding(DOMNode $node, HtmlConverterInterface $htmlConverter): bool {
+		// Skip comments and whitespace, and continue before the parent when the node comes first.
+		$previous=$node->previousSibling;
+		if ($previous instanceof DOMComment || ($previous instanceof DOMText && trim($previous->textContent)==='')) {
+			return $this->followsLineEnding($previous, $htmlConverter);
+		}
+		if ($previous===null) {
+			return ($node->parentNode!==null && $node->parentNode->nodeName!=='body' && $this->followsLineEnding($node->parentNode, $htmlConverter));
+		}
+
+		// Convert a copy of the preceding content and check whether it ends with a newline.
+		$wrapper=$previous->ownerDocument->createElement('div');
+		$wrapper->appendChild($previous->cloneNode(true));
+		$ops=$htmlConverter->convertChildren($wrapper);
+
+		return (end($ops) instanceof DeltaOp && !end($ops)->isEmbed() && str_ends_with(end($ops)->getInsert(), "\n"));
 	}
 
 
