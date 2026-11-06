@@ -37,34 +37,24 @@ class HeaderConverter implements NodeConverterInterface
     }
 
     /**
-     * Whether the content before the header already ends with a newline.
+     * Whether the content before the node, skipping comments and whitespace, already ends with a newline.
      */
     private function followsLineEnding(DOMNode $node, HtmlConverterInterface $htmlConverter): bool
     {
-        $sibling = $node->previousSibling;
-
-        // Skip comments and whitespace, and continue before the parent when the header is its first child
-        while (true) {
-            if ($sibling instanceof DOMComment || ($sibling instanceof DOMText && trim($sibling->textContent) === '')) {
-                $sibling = $sibling->previousSibling;
-            } elseif (null === $sibling && null !== $node->parentNode && 'body' !== $node->parentNode->nodeName) {
-                $node = $node->parentNode;
-                $sibling = $node->previousSibling;
-            } else {
-                break;
-            }
+        // Skip comments and whitespace, and continue before the parent when the node comes first
+        $previous = $node->previousSibling;
+        if ($previous instanceof DOMComment || ($previous instanceof DOMText && trim($previous->textContent) === '')) {
+            return $this->followsLineEnding($previous, $htmlConverter);
         }
-
-        if (null === $sibling) {
-            return true;
+        if (null === $previous) {
+            return null === $node->parentNode || 'body' === $node->parentNode->nodeName || $this->followsLineEnding($node->parentNode, $htmlConverter);
         }
 
         // Convert a copy of the preceding content, so custom converters and wrapped blocks are checked as they convert
-        $wrapper = $sibling->ownerDocument->createElement('div');
-        $wrapper->appendChild($sibling->cloneNode(true));
+        $wrapper = $previous->ownerDocument->createElement('div');
+        $wrapper->appendChild($previous->cloneNode(true));
         $ops = $htmlConverter->convertChildren($wrapper);
-        $last = end($ops);
 
-        return false !== $last && !$last->isEmbed() && str_ends_with($last->getInsert(), "\n");
+        return end($ops) instanceof DeltaOp && !end($ops)->isEmbed() && str_ends_with(end($ops)->getInsert(), "\n");
     }
 }
