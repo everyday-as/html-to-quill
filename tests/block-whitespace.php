@@ -15,7 +15,10 @@ $cases=[
 	'space between inline tags'    => ['<p><b>a</b> <i>b</i></p>', "a b\n"],
 	'newline between inline tags'  => ["<p><b>a</b>\n<i>b</i></p>", "a b\n"],
 	'blocks without line endings'  => ['<div>one</div> <div>two</div>', "one two\n"],
-	'comments between blocks'      => ["<p>a</p><!--x-->\n<!--y--><p>b</p>", "a\nb\n"]
+	'comments between blocks'      => ["<p>a</p><!--x-->\n<!--y--><p>b</p>", "a\nb\n"],
+	'empty element between blocks' => ["<p>a</p><span></span>\n<p>b</p>", "a\nb\n"],
+	'empty elements and newlines'  => ["<p>a</p>\n<b></b><i></i>\n<p>b</p>", "a\nb\n"],
+	'inline after empty element'   => ['<b>a</b><span></span> <i>b</i>', "a b\n"]
 ];
 $converter=new HtmlConverter();
 foreach ($cases as $label => [$html, $expectedText]) {

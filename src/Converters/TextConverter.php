@@ -27,7 +27,7 @@ class TextConverter implements NodeConverterInterface
 		return DeltaOp::text(ltrim($node->textContent, "\n"));
 	}
 
-	//   Check whether the content before the node, skipping comments and whitespace, already ends a line.
+	//   Check whether the content before the node, skipping comments, whitespace and empty content, already ends a line.
 	//   Used by TextConverter\convert, TextConverter\followsLineEnding.
 	private function followsLineEnding(DOMNode $node, HtmlConverterInterface $htmlConverter): bool {
 		// Skip comments and whitespace, and continue before the parent when the node comes first.
@@ -43,6 +43,11 @@ class TextConverter implements NodeConverterInterface
 		$wrapper=$previous->ownerDocument->createElement('div');
 		$wrapper->appendChild($previous->cloneNode(true));
 		$ops=$htmlConverter->convertChildren($wrapper);
+
+		// Skip content that converts to nothing, such as an empty element.
+		if ($ops===[]) {
+			return $this->followsLineEnding($previous, $htmlConverter);
+		}
 
 		return (end($ops) instanceof DeltaOp && !end($ops)->isEmbed() && str_ends_with(end($ops)->getInsert(), "\n"));
 	}
